@@ -17,9 +17,9 @@ def construir_grafo(modo_transporte):
     posicoes = {
         'guarda': (2, 0, 0),                           
         'escada_esquerda_primeiro_piso': (1.75, 0.75, 0),             
-        'elevador_esquerdo_primeiro_piso': (1.8, 0.75, 0),
+        'elevador_esquerdo_primeiro_piso': (1.75, 0.75, 0),
         'escada_esquerda_quarto_piso': (1.75, 0.75, 3),
-        'elevador_quarto_piso': (1.8, 0.75, 3),
+        'elevador_esquerdo_quarto_piso': (1.75, 0.75, 3),
         4007: (1.25, 0, 3),
         4010: (1, 0, 3),
         4013: (0.5, 0, 3),
@@ -35,9 +35,10 @@ def construir_grafo(modo_transporte):
         G.add_edge('escada_esquerda_primeiro_piso', 'escada_esquerda_quarto_piso', weight=calcular_distancia(*posicoes['escada_esquerda_primeiro_piso'], *posicoes['escada_esquerda_quarto_piso']))
     elif modo_transporte == 'elevador':
         G.add_edge('guarda', 'elevador_esquerdo_primeiro_piso', weight=calcular_distancia(*posicoes['guarda'], *posicoes['elevador_esquerdo_primeiro_piso']))
-        G.add_edge('elevador_esquerdo_primeiro_piso', 'elevador_quarto_piso', weight=calcular_distancia(*posicoes['elevador_esquerdo_primeiro_piso'], *posicoes['elevador_quarto_piso']))
+        G.add_edge('elevador_esquerdo_primeiro_piso', 'elevador_esquerdo_quarto_piso', weight=calcular_distancia(*posicoes['elevador_esquerdo_primeiro_piso'], *posicoes['elevador_esquerdo_quarto_piso']))
 
     # Conectar nós do quarto andar com base nas distâncias físicas
+    G.add_edge('elevador_esquerdo_quarto_piso', 'salao_de_honra', weight=calcular_distancia(*posicoes['elevador_esquerdo_quarto_piso'], *posicoes['salao_de_honra']))
     G.add_edge('escada_esquerda_quarto_piso', 'salao_de_honra', weight=calcular_distancia(*posicoes['escada_esquerda_quarto_piso'], *posicoes['salao_de_honra']))
     G.add_edge('salao_de_honra', 'sala_dos_professores', weight=calcular_distancia(*posicoes['salao_de_honra'], *posicoes['sala_dos_professores']))
     G.add_edge('salao_de_honra', 4007, weight=calcular_distancia(*posicoes['salao_de_honra'], *posicoes[4007]))
@@ -46,8 +47,9 @@ def construir_grafo(modo_transporte):
     G.add_edge('salao_de_honra', 4014, weight=calcular_distancia(*posicoes['salao_de_honra'], *posicoes[4014]))
 
     # Conectar elevador do quarto andar a outras salas
-    G.add_edge('elevador_quarto_piso', 'auditorio_quarto_piso', weight=calcular_distancia(*posicoes['elevador_quarto_piso'], *posicoes['auditorio_quarto_piso']))
-
+    G.add_edge('elevador_esquerdo_quarto_piso', 'auditorio_quarto_piso', weight=calcular_distancia(*posicoes['elevador_esquerdo_quarto_piso'], *posicoes['auditorio_quarto_piso']))
+    G.add_edge('elevador_esquerdo_quarto_piso', 'salao_de_honra', weight=calcular_distancia(*posicoes['elevador_esquerdo_quarto_piso'], *posicoes['salao_de_honra']))
+    
     # Conectar as outras salas entre si, conforme layout físico
     G.add_edge(4013, 4010, weight=calcular_distancia(*posicoes[4013], *posicoes[4010]))
     G.add_edge(4014, 4013, weight=calcular_distancia(*posicoes[4014], *posicoes[4013]))
@@ -106,7 +108,7 @@ def visualizar_caminho(path, G):
         'escada_esquerda_primeiro_piso': (1.75, 0.75, 0),             
         'elevador_esquerdo_primeiro_piso': (1.8, 0.75, 0),
         'escada_esquerda_quarto_piso': (1.75, 0.75, 3),
-        'elevador_quarto_piso': (1.8, 0.75, 3),
+        'elevador_esquerdo_quarto_piso': (1.8, 0.75, 3),
         4007: (1.25,0,3),
         4010: (1, 0, 3),
         4013: (0.5, 0, 3),
@@ -192,7 +194,7 @@ formulario.comboBox.addItem("elevador")
 
 # Conecta o botão de pesquisa à função de pesquisa e cadastro
 formulario.pushButton_2.clicked.connect(pesquisar)
-formulario.pushButton.clicked.connect(cadastrar)  # Botão "Cadastrar"
+formulario.pushButton.clicked.connect(cadastrar)  
 
 formulario.show()
 app.exec()
