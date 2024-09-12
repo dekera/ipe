@@ -2,56 +2,71 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from utils import calcular_vetor_direcao, calcular_versor, produto_vetorial
 from grafo import nome_formatado  # Importar o dicionário nome_formatado
+import numpy as np
 
-# Função para gerar instruções de direção e andar
+# Função para gerar instruções de direção e de andar com base no caminho
 def gerar_instrucoes(caminho, posicoes):
     instrucoes = []
     
-    for i in range(1, len(caminho) - 1):
+    # Inicializar o versor caminhado com um vetor neutro
+    versor_caminhado = (1, 0)  # Inicialmente assume que o caminho é na direção do eixo x positivo
+
+    for i in range(1, len(caminho)):
         no_atual = caminho[i]
         no_anterior = caminho[i - 1]
-        no_proximo = caminho[i + 1]
+        
+        # Se não for o último nó, calcular o próximo nó
+        if i < len(caminho) - 1:
+            no_proximo = caminho[i + 1]
+        else:
+            no_proximo = None  # Não há próximo nó no último ciclo
         
         # Coordenadas dos nós
         coord_anterior = posicoes[no_anterior]
         coord_atual = posicoes[no_atual]
-        coord_proximo = posicoes[no_proximo]
-
+        
+        if no_proximo is not None:
+            coord_proximo = posicoes[no_proximo]
+        
         # Verificar se há mudança no andar (eixo z)
         if coord_anterior[2] != coord_atual[2]:
             if coord_atual[2] > coord_anterior[2]:
-                instrucoes.append(f"Suba da {nome_formatado.get(no_anterior, no_anterior)} para a {nome_formatado.get(no_atual, no_atual)}.")
+                instrucoes.append(f"Suba {nome_formatado.get(no_anterior, no_anterior)} para {nome_formatado.get(no_atual, no_atual)}.")
             else:
-                instrucoes.append(f"Desça da {nome_formatado.get(no_anterior, no_anterior)} para a {nome_formatado.get(no_atual, no_atual)}.")
+                instrucoes.append(f"Desça {nome_formatado.get(no_anterior, no_anterior)} para {nome_formatado.get(no_atual, no_atual)}.")
         else:
-            # Calcular o vetor direção
-            vetor_antes = calcular_vetor_direcao(coord_anterior, coord_atual)
-            vetor_depois = calcular_vetor_direcao(coord_atual, coord_proximo)
+            # Calcular o versor caminhado (do nó anterior até o nó atual)
+            vetor_caminhado = calcular_vetor_direcao(coord_anterior, coord_atual)
+            versor_caminhado = calcular_versor(vetor_caminhado)
             
-            # Produto vetorial
-            resultado = produto_vetorial(vetor_antes, vetor_depois)
-            
-            if resultado > 0:
-                instrucoes.append(f"Vire à esquerda e siga até a {nome_formatado.get(no_atual, no_atual)}.")
-            elif resultado < 0:
-                instrucoes.append(f"Vire à direita e siga até a {nome_formatado.get(no_atual, no_atual)}.")
+            if no_proximo is not None:
+                # Calcular o versor seguinte (do nó atual até o nó proximo)
+                vetor_seguinte = calcular_vetor_direcao(coord_atual, coord_proximo)
+                versor_seguinte = calcular_versor(vetor_seguinte)
+
+                # Exibir os vetores e versores calculados
+                print(f"\nAnalisando a rotação em '{nome_formatado.get(no_atual, no_atual)}'")
+                print(f"Versor caminhado (do nó '{nome_formatado.get(no_anterior, no_anterior)}' para '{nome_formatado.get(no_atual, no_atual)}'): {versor_caminhado}")
+                print(f"Versor seguinte (do nó '{nome_formatado.get(no_atual, no_atual)}' para '{nome_formatado.get(no_proximo, no_proximo)}'): {versor_seguinte}")
+
+                # Calcular o produto vetorial entre o versor caminhado e o versor seguinte
+                resultado = produto_vetorial(versor_caminhado, versor_seguinte)
+
+                # Exibir o resultado do produto vetorial
+                print(f"Produto vetorial entre os versores: {resultado}")
+                
+                if np.isclose(resultado, 0, atol=0.02):
+                    instrucoes.append(f"Siga em frente até {nome_formatado.get(no_atual, no_atual)}.")
+                elif resultado > 0:
+                    instrucoes.append(f"Siga até {nome_formatado.get(no_atual, no_atual)} e vire à esquerda.")
+                elif resultado < 0:
+                    instrucoes.append(f"Siga até {nome_formatado.get(no_atual, no_atual)} e vire à direita.")
             else:
-                instrucoes.append(f"Siga em frente até a {nome_formatado.get(no_atual, no_atual)}.")
+                # No caso do último nó, não há próximo nó, portanto, apenas siga em frente até o destino final
+                instrucoes.append(f"Siga em frente até {nome_formatado.get(no_atual, no_atual)}.")
 
-    # Última instrução
-    no_ultimo = caminho[-2]
-    no_destino = caminho[-1]
-    vetor_ultimo = calcular_vetor_direcao(posicoes[no_ultimo], posicoes[no_destino])
-    vetor_penultimo = calcular_vetor_direcao(posicoes[caminho[-3]], posicoes[no_ultimo]) if len(caminho) > 2 else (1, 0)
-    versor_anterior = calcular_versor(vetor_penultimo)
-    resultado_final = produto_vetorial(versor_anterior, vetor_ultimo)
-
-    if resultado_final > 0:
-        instrucoes.append(f"Vire à esquerda e siga até a {nome_formatado.get(no_destino, no_destino)}.")
-    elif resultado_final < 0:
-        instrucoes.append(f"Vire à direita e siga até a {nome_formatado.get(no_destino, no_destino)}.")
-    else:
-        instrucoes.append(f"Siga em frente até a {nome_formatado.get(no_destino, no_destino)}.")
+        # Atualizar o versor caminhado para o próximo ciclo
+        versor_caminhado = calcular_versor(calcular_vetor_direcao(coord_anterior, coord_atual))
 
     return instrucoes
 
@@ -73,7 +88,7 @@ def visualizar_e_instruir(path, G, pos):
             nome_legivel = nome_formatado.get(node, node)
             ax.scatter(x, y, z, s=200, c='lightgreen', label=str(nome_legivel), depthshade=True)
             # Deslocar o texto para evitar sobreposição
-            ax.text(x + 0.08, y + 0.07, z + 0.05, s=str(nome_legivel), fontsize=10)
+            ax.text(x + 0.05, y, z + 0.05, s=str(nome_legivel), fontsize=10)
 
     # Desenhar o caminho mais curto no gráfico 3D
     for edge in zip(path, path[1:]):
@@ -92,6 +107,5 @@ def visualizar_e_instruir(path, G, pos):
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.set_zlabel('Andares (Z)')
-
     plt.title("Gráfico 3D do Prédio com 4 Andares")
     plt.show()
