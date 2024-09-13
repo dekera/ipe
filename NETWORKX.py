@@ -1,7 +1,7 @@
 import sqlite3
 from PyQt5 import uic, QtWidgets
 from grafo import construir_grafo
-from visualizacao1 import visualizar_e_instruir
+from visualizacao import visualizar_e_instruir
 import networkx as nx
 
 
