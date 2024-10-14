@@ -44,16 +44,8 @@ def gerar_instrucoes(caminho, posicoes):
                 vetor_seguinte = calcular_vetor_direcao(coord_atual, coord_proximo)
                 versor_seguinte = calcular_versor(vetor_seguinte)
 
-                # Exibir os vetores e versores calculados
-                print(f"\nAnalisando a rotação em '{nome_formatado.get(no_atual, no_atual)}'")
-                print(f"Versor caminhado (do nó '{nome_formatado.get(no_anterior, no_anterior)}' para '{nome_formatado.get(no_atual, no_atual)}'): {versor_caminhado}")
-                print(f"Versor seguinte (do nó '{nome_formatado.get(no_atual, no_atual)}' para '{nome_formatado.get(no_proximo, no_proximo)}'): {versor_seguinte}")
-
                 # Calcular o produto vetorial entre o versor caminhado e o versor seguinte
                 resultado = produto_vetorial(versor_caminhado, versor_seguinte)
-
-                # Exibir o resultado do produto vetorial
-                print(f"Produto vetorial entre os versores: {resultado}")
                 
                 if np.isclose(resultado, 0, atol=0.02):
                     instrucoes.append(f"Siga em frente até {nome_formatado.get(no_atual, no_atual)}.")

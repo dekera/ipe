@@ -24,26 +24,26 @@ def construir_grafo(modo_transporte):
 
     # Coordenadas dos nós (x, y, z)
     posicoes = {
-        'guarda': (2, 0, 0),
-        'escada_esquerda_primeiro_piso': (1.75, 0.75, 0),
-        'elevador_esquerdo_primeiro_piso': (2, 0.75, 0),
-        'escada_esquerda_quarto_piso': (1.75, 0.75, 3),
-        'elevador_esquerdo_quarto_piso': (2, 0.75, 3),
-        4007: (1.125, 0, 3),
-        4010: (0.75, 0, 3),
-        4013: (0.375, 0, 3),
-        4014: (0, 0, 3),
-        'biblioteca': (2.5, 0, 3),
-        'salao_de_honra': (2, 0, 3),
-        'sala_dos_professores': (1.5, 0, 3),
-        'auditorio_quarto_piso': (2, 1, 3)
+        'guarda': (520, 620, 0),
+        'escada_esquerda_primeiro_piso': (510, 550, 0),
+        'elevador_esquerdo_primeiro_piso': (514, 527, 0),
+        'escada_esquerda_quarto_piso': (510,  550, 3),
+        'elevador_esquerdo_quarto_piso': (514, 527, 3),
+        4007: (380, 580, 3),
+        4010: (300, 580, 3),
+        4013: (260, 580, 3),
+        4014: (215, 580, 3),
+        'biblioteca': (650, 580, 3),
+        'salao_de_honra': (537, 580, 3),
+        'sala_dos_professores': (465, 580, 3),
+        'auditorio_quarto_piso': (537, 510, 3)
     }# Ao atualizar o grafo precisamos lembrar de atualizar os nome na visualizacao
 
     # Conectar nós do primeiro andar ao quarto andar
-    if modo_transporte == 'escada':
+    if modo_transporte == 'Escada':
         G.add_edge('guarda', 'escada_esquerda_primeiro_piso', weight=calcular_distancia(*posicoes['guarda'], *posicoes['escada_esquerda_primeiro_piso']))
         G.add_edge('escada_esquerda_primeiro_piso', 'escada_esquerda_quarto_piso', weight=calcular_distancia(*posicoes['escada_esquerda_primeiro_piso'], *posicoes['escada_esquerda_quarto_piso']))
-    elif modo_transporte == 'elevador':
+    elif modo_transporte == 'Elevador':
         G.add_edge('guarda', 'elevador_esquerdo_primeiro_piso', weight=calcular_distancia(*posicoes['guarda'], *posicoes['elevador_esquerdo_primeiro_piso']))
         G.add_edge('elevador_esquerdo_primeiro_piso', 'elevador_esquerdo_quarto_piso', weight=calcular_distancia(*posicoes['elevador_esquerdo_primeiro_piso'], *posicoes['elevador_esquerdo_quarto_piso']))
 
