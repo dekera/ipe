@@ -91,7 +91,7 @@ def pesquisar():
 app = QtWidgets.QApplication([])
 
 formulario = uic.loadUi("formulario2.ui")
-formulario.comboBox.addItem("Escada")
+formulario.comboBox.addItem("Escada")   
 formulario.comboBox.addItem("Elevador")
 
 formulario.pushButton_2.clicked.connect(pesquisar)

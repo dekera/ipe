@@ -89,9 +89,6 @@ def visualizar_caminho_2d(caminho, posicoes, andar, imagem_planta, ax):
     
     # Carregar a imagem da planta do andar
     img = mpimg.imread(imagem_planta)
-
-    if len(caminho) == 1:
-        print(f"Visualizando nó único no andar {andar + 1}.")
     
     # Coordenadas (x, y) no andar atual
     coords_x = [posicoes[no][0] for no in caminho]
